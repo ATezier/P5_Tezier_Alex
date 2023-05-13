@@ -4,14 +4,12 @@ import com.safetynet.api.model.*;
 import com.safetynet.api.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 public class DataController {
     @Autowired
      PersonService personService;
@@ -19,184 +17,114 @@ public class DataController {
      FireStationService fireStationService;
     @Autowired
      MedicalRecordService medicalRecordService;
-    @Autowired
-    SummaryService summaryService;
-    @Autowired
-    AreaPopulationService areaPopulationService;
-    /**
-     * Read - Get all persons
-     * @return - An Iterable object of Person full filled
-     */
-    @GetMapping("/person")
-    public String person(Model model) {
-        Iterable<Person> persons = personService.getPersons();
-        model.addAttribute("persons", persons);
-        return "person";
+
+    @PostMapping("/person")
+    public void createPerson(@RequestBody Person person) {
+        personService.createPerson(person);
+    }
+    @PutMapping("/person")
+    public void updatePerson(@RequestBody Person person) {
+        personService.updatePerson(person);
     }
 
-    @GetMapping("/createPerson")
-    public String createPerson(Model model) {
-        Person p = new Person();
-        model.addAttribute("person", p);
-        return "formNewPerson";
-    }
-
-    @GetMapping("/updatePerson/{firstName}/{lastName}")
-    public String updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, Model model) {
-        Person p = personService.getPerson(firstName, lastName);
-        model.addAttribute("person", p);
-        return "formUpdatePerson";
-    }
-
-    @GetMapping("/deletePerson/{firstName}/{lastName}")
-    public ModelAndView deletePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName) {
+    @DeleteMapping("/person")
+    public void deletePerson(@RequestParam String firstName,@RequestParam String lastName) {
         personService.deletePerson(firstName, lastName);
-        return new ModelAndView("redirect:/person");
     }
 
-    @PostMapping("/savePerson")
-    public ModelAndView savePerson(@ModelAttribute Person person) {
-        if(personService.getPerson(person.getFirstName(), person.getLastName()) != null) {
-            personService.updatePerson(person);
-        } else {
-            personService.createPerson(person);
-        }
-        return new ModelAndView("redirect:/person");
+    @PostMapping("/firestation")
+    public void createFireStation(@RequestBody FireStation fireStation) {
+        fireStationService.createFireStation(fireStation);
+    }
+
+    @PutMapping("/firestation")
+    public void updateFireStation(@RequestBody FireStation fireStation) {
+        fireStationService.updateFireStationNbr(fireStation);
+    }
+
+    @DeleteMapping("/firestation")
+    public void deleteFireStation(@RequestParam String address) {
+        fireStationService.deleteFireStation(address);
     }
 
     @GetMapping("/firestation")
-    public String firestation(@RequestParam(value = "stationNumber", required = false) String stationNumber,
-                              Model model) {
-        Iterable<?> data = (stationNumber != null) ?
-                summaryService.getSummariesByFireStationNumber(Integer.parseInt(stationNumber)) :
-                fireStationService.getFireStations();
-        model.addAttribute("data", data);
-        return "firestation";
+    public List<Summary> firestation(@RequestParam String stationNumber) {
+        List<Summary> summaries = personService.getSummariesByFireStationNumber(Integer.parseInt(stationNumber));
+        return summaries;
     }
 
-    @GetMapping("/createFirestation")
-    public String createFirestation(Model model) {
-        FireStation f = new FireStation();
-        model.addAttribute("fireStation", f);
-        return "formNewFirestation";
+    @PostMapping("/medicalRecord")
+    public void createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+        medicalRecordService.createMedicalRecord(medicalRecord);
     }
 
-    @GetMapping("/updateFirestation/{address}")
-    public String updateFirestation(@PathVariable("address") final String address, Model model) {
-        FireStation f = fireStationService.getFireStationByAddress(address);
-        model.addAttribute("fireStation", f);
-        return "formUpdateFirestation";
+    @PutMapping("/medicalRecord")
+    public void updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+        medicalRecordService.updateMedicalRecord(medicalRecord);
     }
 
-    @GetMapping("/deleteFirestation/{address}")
-    public ModelAndView deleteFirestation(@PathVariable("address") final String address) {
-        fireStationService.deleteFireStation(address);
-        return new ModelAndView("redirect:/firestation");
-    }
-
-    @PostMapping("/saveFirestation")
-    public ModelAndView saveFirestation(@ModelAttribute FireStation fireStation) {
-        if(fireStationService.getFireStationByAddress(fireStation.getAddress()) != null) {
-            fireStationService.updateFireStationNbr(fireStation);
-        } else {
-            fireStationService.createFireStation(fireStation);
-        }
-        return new ModelAndView("redirect:/firestation");
-    }
-
-
-    @GetMapping("/medicalRecord")
-    public String medicalRecord(Model model) {
-        Iterable<MedicalRecord> medicalRecords = medicalRecordService.getMedicalRecords();
-        model.addAttribute("medicalRecords", medicalRecords);
-        return "medicalRecord";
-    }
-
-    @GetMapping("/createMedicalRecord")
-    public String createMedicalRecord(Model model) {
-        MedicalRecord m = new MedicalRecord();
-        model.addAttribute("medicalRecord", m);
-        return "formNewMedicalRecord";
-    }
-
-    @GetMapping("/updateMedicalRecord/{firstName}/{lastName}")
-    public String updateMedicalRecord(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, Model model) {
-        MedicalRecord m = medicalRecordService.getMedicalRecord(firstName, lastName);
-        model.addAttribute("medicalRecord", m);
-        return "formUpdateMedicalRecord";
-    }
-
-    @GetMapping("/deleteMedicalRecord/{firstName}/{lastName}")
-    public ModelAndView deleteMedicalRecord(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName) {
+    @DeleteMapping("/medicalRecord")
+    public void deleteMedicalRecord(@RequestParam String firstName, @RequestParam String lastName) {
         medicalRecordService.deleteMedicalRecord(lastName, firstName);
-        return new ModelAndView("redirect:/medicalRecord");
-    }
-
-    @PostMapping("/saveMedicalRecord")
-    public ModelAndView saveMedicalRecord(@ModelAttribute MedicalRecord medicalRecord) {
-        if(medicalRecordService.getMedicalRecord(medicalRecord.getFirstName(), medicalRecord.getLastName()) != null) {
-            medicalRecordService.updateMedicalRecord(medicalRecord);
-        } else {
-            medicalRecordService.createMedicalRecord(medicalRecord);
-        }
-        return new ModelAndView("redirect:/medicalRecord");
     }
 
     @GetMapping("/childAlert")
-    public String childAlert(@RequestParam("address") String address, Model model) {
+    public AreaPopulation childAlert(@RequestParam String address) {
         AreaPopulation areaPopulation = null;
-        if(address != null) areaPopulation = areaPopulationService.childAlert(address);
-        model.addAttribute("areaPopulation", areaPopulation);
-        return "childAlert";
+        if(address != null) areaPopulation = personService.childAlert(address);
+        return areaPopulation;
     }
     @GetMapping("/phoneAlert")
-    public String phoneAlert(@RequestParam("firestation") String firestation, Model model) {
-        Iterable<String> phones = null;
+    public List<String> phoneAlert(@RequestParam String firestation) {
+        List<String> phones = null;
+        System.out.println("Hello");
         if(firestation != null) {
             phones = personService.getPhonesByFireStation(Integer.parseInt(firestation));
         }
-        model.addAttribute("phones", phones);
-        return "phoneAlert";
+        return phones;
     }
     @GetMapping("/fire")
-    public String fire(@RequestParam("address") String address, Model model) {
-        Iterable<Summary> summaries = null;
+    public List<Summary> fire(@RequestParam String address) {
+        List<Summary> summaries = null;
         if(address != null) {
-            summaries = summaryService.getSummariesByAddress(address);
+            summaries = personService.getSummariesByAddress(address);
         }
-        model.addAttribute("summaries", summaries);
-        return "fire";
+        return summaries;
     }
     @GetMapping("/flood/stations")
-    public String stations(@RequestParam("stations") List<String> stations, Model model) {
-        Iterable<Summary> summaries = null;
-        List<Integer> input = new ArrayList<>();
+    public List<Summary> stations(@RequestParam String stations) {
+        List<Summary> summaries = null;
+        List<Integer> stationsIntList = new ArrayList<>();
+        String refinedInput;
         if(stations != null) {
-            for(String station : stations) {
-                input.add(Integer.parseInt(station));
+            refinedInput = stations.replace("(","");
+            refinedInput = refinedInput.replace(")", "");
+            refinedInput = refinedInput.replace("[", "");
+            refinedInput = refinedInput.replace("]", "");
+            refinedInput = refinedInput.replace("{", "");
+            refinedInput = refinedInput.replace("}", "");
+            refinedInput = refinedInput.replace(" ", "");
+            for(String station : refinedInput.split(",")) {
+                stationsIntList.add(Integer.parseInt(station));
             }
-            summaries = summaryService.getSummariesByStationNumberList(input);
+            summaries = personService.getSummariesByStationNumberList(stationsIntList);
         }
-        model.addAttribute("summaries", summaries);
-        return "stations";
+        return summaries;
     }
     @GetMapping("/personInfo")
-    public String personInfo(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName, Model model) {
-        Iterable<Summary> summaries = null;
+    public List<Summary> personInfo(@RequestParam String firstName, @RequestParam String lastName) {
+        List<Summary> summaries = null;
         if(firstName != null && lastName != null) {
-            summaries = summaryService.getSummariesByName(lastName, firstName);
+            summaries = personService.getSummariesByName(lastName, firstName);
         }
-        model.addAttribute("summaries", summaries);
-        return "personInfo";
+        return summaries;
     }
     @GetMapping("/communityEmail")
-    public String communityEmail(@RequestParam("city") String city, Model model) {
+    public List<String> communityEmail(@RequestParam String city) {
         List<String> emails = null;
         if(city != null) {
             emails = personService.getEmailsByCity(city);
-            System.out.println(city + " donc non null");
         }
-        model.addAttribute("emails", emails);
-        return "communityEmail";
+        return emails;
     }
 }

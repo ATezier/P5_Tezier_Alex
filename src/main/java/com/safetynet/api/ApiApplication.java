@@ -17,9 +17,6 @@ import java.util.List;
 
 @SpringBootApplication(scanBasePackages = {"com.safetynet.*"})
 public class ApiApplication implements CommandLineRunner {
-    @Autowired
-    PersonService personService;
-
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
     }
