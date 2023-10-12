@@ -77,7 +77,6 @@ public class DataController {
     @GetMapping("/phoneAlert")
     public List<String> phoneAlert(@RequestParam String firestation) {
         List<String> phones = null;
-        System.out.println("Hello");
         if(firestation != null) {
             phones = personService.getPhonesByFireStation(Integer.parseInt(firestation));
         }

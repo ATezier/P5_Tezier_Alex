@@ -66,11 +66,22 @@ public class PersonService extends DataManager{
         return s;
     }
 
+    public Summary getSummaryByPerson(Person p) {
+        Summary s = null;
+        if(p != null) {
+            s = new Summary();
+            s.updateWithPerson(p);
+            s.updateWithMedicalRecord(this.getMedicalRecord(p.getFirstName(), p.getLastName()));
+            s.updateWithFireStation(this.getFireStationByAddress(p.getAddress()));
+        }
+        return s;
+    }
+
     public List<Summary> getSummariesByAddress(String address) {
         List<Summary> res = new ArrayList<>();
         List<Person> persons = this.getPersonsByAddress(address);
         for(Person p : persons) {
-            Summary s = getSummaryByName(p.getFirstName(), p.getLastName());
+            Summary s = getSummaryByPerson(p);
             res.add(s);
         }
         return res;
@@ -112,7 +123,7 @@ public class PersonService extends DataManager{
         }
         if(filteredPersons != null) {
             for(Person p : filteredPersons) {
-                summaries.add(getSummaryByName(p.getFirstName(), p.getLastName()));
+                summaries.add(getSummaryByPerson(p));
             }
         }
         return summaries;

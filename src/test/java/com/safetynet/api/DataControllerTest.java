@@ -1,6 +1,8 @@
 package com.safetynet.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.model.Person;
@@ -17,8 +19,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,86 +57,160 @@ public class DataControllerTest {
         fireStation.setAddress("3214 Main St");
     }
 
-    @Test
-    public void testViewPerson() throws Exception {
-        mockMvc.perform(get("/person"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("person"));
-    }
+
 
     @Test
-    public void testNewPerson() throws Exception {
-        mockMvc.perform(post("/savePerson")
-                        .param("firstName", person.getFirstName())
-                        .param("lastName", person.getLastName())
-                        .param("address", person.getAddress())
-                        .param("city", person.getCity())
-                        .param("phones", person.getPhone())
-                        .param("email", person.getEmail()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/person"))
-                .andExpect(content().string(contains(person.getCity())));
+    public void testCreatePerson() throws Exception {
+        String url = "/person";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(person);
+
+        mockMvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testUpdatePerson() throws Exception {
+        String url = "/person";
+        person.setCity("SomeWhereElse");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(person);
+
+        mockMvc.perform(put(url).contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testDeletePerson() throws Exception {
-        mockMvc.perform(get("/deletePerson/{firstName}/{lastName}", person.getFirstName(), person.getLastName()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/person"));
+        mockMvc.perform(delete("/person")
+                        .param("firstName", person.getFirstName())
+                        .param("lastName", person.getLastName()))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testViewMedicalRecord() throws Exception {
-        mockMvc.perform(get("/medicalRecord"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("medicalRecord"));
-    }
+    public void testCreateFireStation() throws Exception {
+        String url = "/firestation";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(fireStation);
 
-    @Test
-    public void testNewMedicalRecord() throws Exception {
-        mockMvc.perform(post("/saveMedicalRecord")
-                        .param("firstName", medicalRecord.getFirstName())
-                        .param("lastName", medicalRecord.getLastName())
-                        .param("birthdate", medicalRecord.getBirthdate())
-                        .param("medications", medicalRecord.getMedications())
-                        .param("allergies", medicalRecord.getAllergies()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/medicalRecord"))
-                .andExpect(content().string(contains(medicalRecord.getBirthdate())));
-    }
-
-    @Test
-    public void testDeleteMedicalRecord() throws Exception {
-        mockMvc.perform(get("/deleteMedicalRecord/{firstName}/{lastName}", medicalRecord.getFirstName(), medicalRecord.getLastName()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/medicalRecord"));
+        mockMvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isOk());
     }
 
 
     @Test
-    public void testViewFireStation() throws Exception {
-        mockMvc.perform(get("/firestation"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("firestation"));
-    }
+    public void testUpdateFireStation() throws Exception {
+        String url = "/firestation";
+        fireStation.setStation(40);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(fireStation);
 
-    @Test
-    public void testNewFireStation() throws Exception {
-        mockMvc.perform(post("/saveFirestation")
-                        .param("address", fireStation.getAddress())
-                        .param("station", (String.valueOf(fireStation.getStation()))))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/firestation"))
-                .andExpect(content().string(contains(medicalRecord.getBirthdate())));
+        mockMvc.perform(put(url).contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testDeleteFireStation() throws Exception {
-        mockMvc.perform(get("/deleteFirestation/{firstName}", fireStation.getAddress()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/firestation"));
+        mockMvc.perform(delete("/firestation")
+                        .param("address", fireStation.getAddress()))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void testCreateMedicalRecord() throws Exception {
+        String url = "/medicalRecord";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(medicalRecord);
+
+        mockMvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateMedicalRecord() throws Exception {
+        String url = "/medicalRecord";
+        medicalRecord.setBirthdate("04/01/1790");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(medicalRecord);
+
+        mockMvc.perform(put(url).contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteMedicalRecord() throws Exception {
+        mockMvc.perform(delete("/person")
+                        .param("firstName", medicalRecord.getFirstName())
+                        .param("lastName", medicalRecord.getLastName()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testFireStation() throws Exception {
+        mockMvc.perform(get("/firestation")
+                        .param("stationNumber", "2"))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void testChildAlert() throws Exception {
+        mockMvc.perform(get("/childAlert")
+                .param("address", person.getAddress()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testPhoneAlert() throws Exception {
+        mockMvc.perform(get("/phoneAlert")
+                        .param("firestation", "2"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testFire() throws Exception {
+        mockMvc.perform(get("/fire")
+                        .param("address", person.getAddress()))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testFloodStations() throws Exception {
+        mockMvc.perform(get("/flood/stations")
+                        .param("stations", "(1, 2, 3)"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testPersonInfo() throws Exception {
+        mockMvc.perform(get("/personInfo")
+                        .param("firstName", person.getFirstName())
+                        .param("lastName", person.getLastName()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testCommunityEmail() throws Exception {
+        mockMvc.perform(get("/communityEmail")
+                        .param("city", person.getCity()))
+                .andExpect(status().isOk());
     }
 }
