@@ -1,18 +1,29 @@
 package com.safetynet.api.service;
 
 import com.safetynet.api.model.MedicalRecord;
-import com.safetynet.api.model.Person;
-import com.safetynet.api.repository.DataManager;
+import com.safetynet.api.repository.MedicalRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
-public class MedicalRecordService extends DataManager{
+public class MedicalRecordService {
+    @Autowired
+    MedicalRecordRepository medicalRecordRepository;
 
+    public List<MedicalRecord> getMedicalRecords() { return medicalRecordRepository.getMedicalRecords(); }
+
+    public MedicalRecord getMedicalRecord(String firstName, String lastName) { return medicalRecordRepository.getMedicalRecord(firstName, lastName); }
+
+    public boolean createMedicalRecord(MedicalRecord medicalRecord) { return medicalRecordRepository.createMedicalRecord(medicalRecord); }
+
+    public boolean updateMedicalRecord(MedicalRecord medicalRecord) { return medicalRecordRepository.updateMedicalRecord(medicalRecord); }
+
+    public boolean deleteMedicalRecord(String firstName, String lastName) { return medicalRecordRepository.deleteMedicalRecord(firstName, lastName); }
     public static int getAgeFromBirthdate(String birthdate) {
         int res = 0;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -24,10 +35,10 @@ public class MedicalRecordService extends DataManager{
         return res;
     }
 
-    public int getAgeFromPerson(Person person) {
+    public int getAge(String firstName, String lastName) {
         int res = 0;
         MedicalRecord medicalRecord;
-        medicalRecord = this.getMedicalRecord(person.getFirstName(), person.getLastName());
+        medicalRecord = medicalRecordRepository.getMedicalRecord(firstName, lastName);
         if(medicalRecord != null) {
             res = getAgeFromBirthdate(medicalRecord.getBirthdate());
         }
