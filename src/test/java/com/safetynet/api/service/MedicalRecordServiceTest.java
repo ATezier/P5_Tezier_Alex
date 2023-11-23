@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -43,6 +45,9 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void getMedicalRecordsTest() {
+        List<MedicalRecord> medicalRecords = new ArrayList<>();
+        medicalRecords.add(medicalRecord);
+        given(medicalRecordRepository.getMedicalRecords()).willReturn(medicalRecords);
         assertFalse(medicalRecordService.getMedicalRecords().isEmpty());
     }
 

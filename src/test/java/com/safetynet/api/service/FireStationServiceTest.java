@@ -5,6 +5,7 @@ import com.safetynet.api.repository.FireStationRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,12 +22,12 @@ public class FireStationServiceTest {
     private static FireStation fireStation;
     @MockBean
     FireStationRepository fireStationRepository;
-    @Mock
+    @Autowired
     FireStationService fireStationService;
 
     @BeforeAll
     public static void setup() {
-            fireStation = new FireStation();
+        fireStation = new FireStation();
         fireStation.setStation(9);
         fireStation.setAddress("1510 Culver St");
     }

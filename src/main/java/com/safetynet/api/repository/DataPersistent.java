@@ -65,7 +65,6 @@ public class DataPersistent {
     public void saveData() {
         if(dataCluster != null) {
             try {
-                System.out.println(dataCluster.toString());
                 objectMapper.writeValue(new File(props.getJsonPath()), dataCluster);
                 logs.debug("Data have successfully saved.");
             } catch (IOException e) {

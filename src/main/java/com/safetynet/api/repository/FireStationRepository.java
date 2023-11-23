@@ -26,7 +26,7 @@ public class FireStationRepository {
                     .filter(f -> f.getAddress().equals(address))
                     .findAny()
                     .orElse(null);
-            if(fireStation == null) logs.error("FireStation doesn't exist.");
+            if(fireStation == null) logs.debug("FireStation doesn't exist.");
         }
         return fireStation;
     }

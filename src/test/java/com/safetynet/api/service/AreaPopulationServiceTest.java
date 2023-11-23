@@ -54,6 +54,9 @@ public class AreaPopulationServiceTest {
 
     @Test
     public void childAlertTest() {
+        Summary s = new Summary();
+        s.setAge(10);
+        summaries.add(s);
         given(summaryService.getSummariesByAddress(anyString())).willReturn(summaries);
         assertNotNull(areaPopulationService.childAlert("1509 Culver St"));
     }

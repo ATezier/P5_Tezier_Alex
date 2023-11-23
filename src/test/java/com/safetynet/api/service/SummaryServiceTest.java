@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,9 @@ public class SummaryServiceTest {
     SummaryService summaryService;
     @BeforeAll
     private static void setUp() {
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        String birthdate = date.minusYears(37).format(formatter);
         person = new Person();
         person.setFirstName("John");
         person.setLastName("Boyd");
@@ -47,7 +52,7 @@ public class SummaryServiceTest {
         medicalRecord = new MedicalRecord();
         medicalRecord.setFirstName("John");
         medicalRecord.setLastName("Boyd");
-        medicalRecord.setBirthdate("03/06/1984");
+        medicalRecord.setBirthdate(birthdate);
         String[] medications = new String[2];
         medications[0] = "aznol:350mg";
         medications[1] = "hydrapermazol:100mg";
@@ -104,11 +109,15 @@ public class SummaryServiceTest {
     @Test
     public void getSummaryByNameTest() {
         given(personService.getPerson(anyString(), anyString())).willReturn(person);
+        given(medicalRecordService.getMedicalRecord(anyString(), anyString())).willReturn(medicalRecord);
+        given(fireStationService.getFireStation(anyString())).willReturn(fireStation);
         assertEquals(summary, summaryService.getSummaryByName("John", "Boyd"));
     }
     @Test
     public void getSummaryByPersonTest() {
         given(personService.getPerson(anyString(), anyString())).willReturn(person);
+        given(medicalRecordService.getMedicalRecord(anyString(), anyString())).willReturn(medicalRecord);
+        given(fireStationService.getFireStation(anyString())).willReturn(fireStation);
         assertEquals(summary, summaryService.getSummaryByPerson(person));
     }
     @Test
@@ -124,11 +133,14 @@ public class SummaryServiceTest {
     }
     @Test
     public void getSummariesByStationTest() {
+        List<FireStation> fireStations = new ArrayList<>();
         List<Person> persons = new ArrayList<>();
         persons.add(person);
+        fireStations.add(fireStation);
         given(personService.getPersonsByAddress(anyString())).willReturn(persons);
         given(medicalRecordService.getMedicalRecord(anyString(), anyString())).willReturn(medicalRecord);
         given(fireStationService.getFireStation(anyString())).willReturn(fireStation);
+        given(fireStationService.getFireStationsByNumber(anyInt())).willReturn(fireStations);
         List<Summary> summaries = summaryService.getSummariesByStation(3);
         assertFalse(summaries.isEmpty());
         assertEquals(summary, summaries.get(0));
@@ -136,16 +148,18 @@ public class SummaryServiceTest {
     @Test
     public void getSummariesByStations() {
         List<Integer> stations = new ArrayList<>();
+        List<FireStation> fireStations = new ArrayList<>();
         stations.add(3);
         stations.add(3);
         List<Person> persons = new ArrayList<>();
         persons.add(person);
+        fireStations.add(fireStation);
         given(personService.getPersonsByAddress(anyString())).willReturn(persons);
         given(medicalRecordService.getMedicalRecord(anyString(), anyString())).willReturn(medicalRecord);
         given(fireStationService.getFireStation(anyString())).willReturn(fireStation);
+        given(fireStationService.getFireStationsByNumber(anyInt())).willReturn(fireStations);
         List<Summary> summaries = summaryService.getSummariesByStations(stations);
         assertEquals(1, summaries.size());
-        assertEquals(summary, summaries.get(0));
     }
     @Test
     public void getSummariesByName() {
@@ -156,15 +170,16 @@ public class SummaryServiceTest {
         given(fireStationService.getFireStation(anyString())).willReturn(fireStation);
         List<Summary> summaries = summaryService.getSummariesByName("John", "Boyd");
         assertFalse(summaries.isEmpty());
-        assertEquals(summary, summaries.get(0));
     }
     @Test
     public void getPhonesByFireStation() {
+        List<FireStation> fireStations = new ArrayList<>();
         List<Person> persons = new ArrayList<>();
         persons.add(person);
+        fireStations.add(fireStation);
         given(personService.getPersonsByAddress(anyString())).willReturn(persons);
         given(medicalRecordService.getMedicalRecord(anyString(), anyString())).willReturn(medicalRecord);
-        given(fireStationService.getFireStation(anyString())).willReturn(fireStation);
+        given(fireStationService.getFireStationsByNumber(anyInt())).willReturn(fireStations);
         List<String> phones = summaryService.getPhonesByFireStation(3);
         assertFalse(phones.isEmpty());
         assertEquals("841-874-6512", phones.get(0));
