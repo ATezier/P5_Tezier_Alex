@@ -2,6 +2,7 @@ package com.safetynet.api.service;
 
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.repository.MedicalRecordRepository;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 public class MedicalRecordService {
+    public static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MedicalRecordService.class);
     @Autowired
     MedicalRecordRepository medicalRecordRepository;
 
@@ -41,6 +43,8 @@ public class MedicalRecordService {
         medicalRecord = medicalRecordRepository.getMedicalRecord(firstName, lastName);
         if(medicalRecord != null) {
             res = getAgeFromBirthdate(medicalRecord.getBirthdate());
+        } else {
+            logger.error("MedicalRecord not found for " + firstName + " " + lastName);
         }
         return res;
     }

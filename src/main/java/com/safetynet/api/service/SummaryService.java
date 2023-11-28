@@ -4,6 +4,7 @@ import com.safetynet.api.dto.Summary;
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.model.Person;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class SummaryService {
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(SummaryService.class);
     @Autowired
     PersonService personService;
     @Autowired
@@ -21,7 +23,9 @@ public class SummaryService {
     FireStationService fireStationService;
 
     public void updateWithPerson(Summary summary, Person person) {
-        if(person != null && summary != null) {
+        if(person == null) logger.debug("SummaryService.updateWithPerson: person is null");
+        else if (summary == null) logger.debug("SummaryService.updateWithPerson: summary is null");
+        else {
             summary.setFirstName(person.getFirstName());
             summary.setLastName(person.getLastName());
             summary.setAddress(person.getAddress());
@@ -29,20 +33,27 @@ public class SummaryService {
             summary.setCity(person.getCity());
             summary.setZip(person.getZip());
             summary.setEmail(person.getEmail());
+            logger.info("SummaryService.updateWithPerson:  Successfully updated.");
         }
     }
 
     public void updateWithMedicalRecord(Summary summary, MedicalRecord medicalRecord) {
-        if(medicalRecord != null && summary != null) {
+        if(medicalRecord == null) logger.debug("SummaryService.updateWithMedicalRecord: medicalRecord is null");
+        else if (summary == null) logger.debug("SummaryService.updateWithMedicalRecord: summary is null");
+        else {
             summary.setAge(MedicalRecordService.getAgeFromBirthdate(medicalRecord.getBirthdate()));
             summary.setMedications(medicalRecord.getMedications());
             summary.setAllergies(medicalRecord.getAllergies());
+            logger.info("SummaryService.updateWithMedicalRecord: Successfully updated.");
         }
     }
 
     public void updateWithFireStation(Summary summary, FireStation fireStation) {
-        if(fireStation != null && summary != null) {
+        if (fireStation == null) logger.debug("SummaryService.updateWithFireStation: fireStation is null");
+        else if (summary == null) logger.debug("SummaryService.updateWithFireStation: summary is null");
+        else {
             summary.setStation(fireStation.getStation());
+            logger.info("SummaryService.updateWithFireStation: Successfully updated.");
         }
     }
 
@@ -55,6 +66,7 @@ public class SummaryService {
             updateWithPerson(s, p);
             updateWithMedicalRecord(s, medicalRecordService.getMedicalRecord(firstName, lastName));
             updateWithFireStation(s, fireStationService.getFireStation(p.getAddress()));
+            logger.info("SummaryService.getSummaryByName: Successfully created.");
         }
         return s;
     }
@@ -66,6 +78,7 @@ public class SummaryService {
             updateWithPerson(s, p);
             updateWithMedicalRecord(s, medicalRecordService.getMedicalRecord(s.getFirstName(), s.getLastName()));
             updateWithFireStation(s, fireStationService.getFireStation(p.getAddress()));
+            logger.info("SummaryService.getSummaryByPerson: Successfully created.");
         }
         return s;
     }
@@ -77,6 +90,8 @@ public class SummaryService {
             Summary s = getSummaryByPerson(p);
             res.add(s);
         }
+        if (res.isEmpty()) logger.debug("SummaryService.getSummariesByAddress: No summary found.");
+        else logger.info("SummaryService.getSummariesByAddress: Successfully created.");
         return res;
     }
 
@@ -88,6 +103,8 @@ public class SummaryService {
                 res.addAll(getSummariesByAddress(f.getAddress()));
             }
         }
+        if (res.isEmpty()) logger.debug("SummaryService.getSummariesByStation: No summary found.");
+        else logger.info("SummaryService.getSummariesByStation: Successfully created.");
         return res;
     }
 
@@ -99,6 +116,8 @@ public class SummaryService {
                 summaries.addAll(getSummariesByStation(station));
             }
         }
+        if (summaries.isEmpty()) logger.debug("SummaryService.getSummariesByStations: No summary found.");
+        else logger.info("SummaryService.getSummariesByStations: Successfully created.");
         return summaries;
     }
 
@@ -120,6 +139,8 @@ public class SummaryService {
                 summaries.add(getSummaryByPerson(p));
             }
         }
+        if (summaries.isEmpty()) logger.debug("SummaryService.getSummariesByName: No summary found.");
+        else logger.info("SummaryService.getSummariesByName: Successfully created.");
         return summaries;
     }
     public List<String> getPhonesByFireStation(int station) {
@@ -135,6 +156,8 @@ public class SummaryService {
                 }
             }
         }
+        if (phones.isEmpty()) logger.debug("SummaryService.getPhonesByFireStation: No phone found.");
+        else logger.info("SummaryService.getPhonesByFireStation: Successfully created.");
         return phones;
     }
 }

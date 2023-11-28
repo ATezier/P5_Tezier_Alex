@@ -3,6 +3,7 @@ package com.safetynet.api.controller;
 import com.safetynet.api.dto.Summary;
 import com.safetynet.api.service.SummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,21 +17,36 @@ public class SummaryController {
     SummaryService summaryService;
 
     @GetMapping("/firestation")
-    public List<Summary> firestation(@RequestParam String stationNumber) {
+    public ResponseEntity<?> firestation(@RequestParam String stationNumber) {
+        ResponseEntity<List<Summary>> res = null;
         List<Summary> summaries = summaryService.getSummariesByStation(Integer.parseInt(stationNumber));
-        return summaries;
+        if(summaries.isEmpty()) {
+            res = ResponseEntity.notFound().build();
+        } else {
+            res = ResponseEntity.ok(summaries);
+        }
+        return res;
     }
     @GetMapping("/fire")
-    public List<Summary> fire(@RequestParam String address) {
+    public ResponseEntity<?> fire(@RequestParam String address) {
+        ResponseEntity<List<Summary>> res = null;
         List<Summary> summaries = null;
         if(address != null) {
             summaries = summaryService.getSummariesByAddress(address);
+            if (summaries.isEmpty()) {
+                res = ResponseEntity.notFound().build();
+            } else {
+                res = ResponseEntity.ok(summaries);
+            }
+        } else {
+            res = ResponseEntity.badRequest().build();
         }
-        return summaries;
+        return res;
     }
     @GetMapping("/flood/stations")
-    public List<Summary> stations(@RequestParam String stations) {
+    public ResponseEntity<?> stations(@RequestParam String stations) {
         List<Summary> summaries = null;
+        ResponseEntity<List<Summary>> res = null;
         List<Integer> stationsIntList = new ArrayList<>();
         String refinedInput;
         if(stations != null) {
@@ -45,24 +61,45 @@ public class SummaryController {
                 stationsIntList.add(Integer.parseInt(station));
             }
             summaries = summaryService.getSummariesByStations(stationsIntList);
+            if(summaries.isEmpty()) {
+                res = ResponseEntity.notFound().build();
+            } else {
+                res = ResponseEntity.ok(summaries);
+            }
         }
-        return summaries;
+        return res;
     }
     @GetMapping("/personInfo")
-    public List<Summary> personInfo(@RequestParam String firstName, @RequestParam String lastName) {
+    public ResponseEntity<?> personInfo(@RequestParam String firstName, @RequestParam String lastName) {
         List<Summary> summaries = null;
+        ResponseEntity<List<Summary>> res = null;
         if(firstName != null && lastName != null) {
             summaries = summaryService.getSummariesByName(lastName, firstName);
+            if(summaries.isEmpty()) {
+                res = ResponseEntity.notFound().build();
+            } else {
+                res = ResponseEntity.ok(summaries);
+            }
+        } else {
+            res = ResponseEntity.badRequest().build();
         }
-        return summaries;
+        return res;
     }
 
     @GetMapping("/phoneAlert")
-    public List<String> phoneAlert(@RequestParam String firestation) {
+    public ResponseEntity<?> phoneAlert(@RequestParam String firestation) {
+        ResponseEntity<List<String>> res = null;
         List<String> phones = null;
         if(firestation != null) {
             phones = summaryService.getPhonesByFireStation(Integer.parseInt(firestation));
+            if(phones.isEmpty()) {
+                res = ResponseEntity.notFound().build();
+            } else {
+                res = ResponseEntity.ok(phones);
+            }
+        } else {
+            res = ResponseEntity.badRequest().build();
         }
-        return phones;
+        return res;
     }
 }

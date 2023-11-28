@@ -33,6 +33,7 @@ public class FireStationRepository {
 
     public List<FireStation> getFireStations() {
         if(firestations == null) firestations = dataPersistent.getFireStations();
+        if (firestations == null) logs.debug("No FireStation found.");
         return firestations;
     }
     public boolean createFireStation(FireStation fireStation) {

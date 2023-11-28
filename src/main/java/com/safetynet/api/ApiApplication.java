@@ -1,14 +1,6 @@
 package com.safetynet.api;
 
-import com.safetynet.api.model.FireStation;
-import com.safetynet.api.model.MedicalRecord;
-import com.safetynet.api.model.Person;
-import com.safetynet.api.repository.FireStationRepository;
-import com.safetynet.api.repository.MedicalRecordRepository;
-import com.safetynet.api.repository.PersonRepository;
-import com.safetynet.api.service.FireStationService;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

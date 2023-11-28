@@ -31,6 +31,7 @@ public class PersonRepository {
     }
     public List<Person> getPersons() {
         if(persons == null) persons = dataPersistent.getPersons();
+        if (persons == null) logs.error("No person found.");
         return persons; }
 
     public boolean createPerson(Person person) {

@@ -33,6 +33,7 @@ public class MedicalRecordRepository {
 
     public List<MedicalRecord> getMedicalRecords() {
         if(medicalRecords == null) medicalRecords = dataPersistent.getMedicalRecords();
+        if (medicalRecords == null) logs.debug("MedicalRecords doesn't exist.");
         return medicalRecords;
     }
     public boolean createMedicalRecord(MedicalRecord medicalRecord) {
