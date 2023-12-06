@@ -4,6 +4,7 @@ import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,35 +14,35 @@ public class MedicalRecordController {
 
 
     @PostMapping("/medicalRecord")
-    public HttpStatus createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        HttpStatus status = null;
+    public ResponseEntity<?> createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+        ResponseEntity<?> res = null;
         if(medicalRecordService.createMedicalRecord(medicalRecord)) {
-            status = HttpStatus.CREATED;
+            res = new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 
     @PutMapping("/medicalRecord")
-    public HttpStatus updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        HttpStatus status = null;
+    public ResponseEntity<?> updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+        ResponseEntity<?> res = null;
         if(medicalRecordService.updateMedicalRecord(medicalRecord)) {
-            status = HttpStatus.OK;
+            res = new ResponseEntity<>(HttpStatus.OK);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 
     @DeleteMapping("/medicalRecord")
-    public HttpStatus deleteMedicalRecord(@RequestParam String firstName, @RequestParam String lastName) {
-        HttpStatus status = null;
+    public ResponseEntity<?> deleteMedicalRecord(@RequestParam String firstName, @RequestParam String lastName) {
+        ResponseEntity<?> res = null;
         if(medicalRecordService.deleteMedicalRecord(firstName, lastName)) {
-            status = HttpStatus.OK;
+            res = new ResponseEntity<>(HttpStatus.OK);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 }

@@ -14,35 +14,35 @@ public class PersonController {
     @Autowired
     PersonService personService;
     @PostMapping("/person")
-    public HttpStatus createPerson(@RequestBody Person person) {
-        HttpStatus status = null;
+    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+        ResponseEntity<?> res = null;
         if(personService.createPerson(person)) {
-            status = HttpStatus.CREATED;
+            res = new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
     @PutMapping("/person")
-    public HttpStatus updatePerson(@RequestBody Person person) {
-        HttpStatus status = null;
+    public ResponseEntity<?> updatePerson(@RequestBody Person person) {
+        ResponseEntity<?> res = null;
         if(personService.updatePerson(person)) {
-            status = HttpStatus.OK;
+            res = new ResponseEntity<>(HttpStatus.OK);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 
     @DeleteMapping("/person")
-    public HttpStatus deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
-        HttpStatus status = null;
+    public ResponseEntity<?> deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
+        ResponseEntity<?> res = null;
         if(personService.deletePerson(firstName, lastName)) {
-            status = HttpStatus.OK;
+            res = new ResponseEntity<>(HttpStatus.OK);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
     @GetMapping("/communityEmail")
     public ResponseEntity<?> communityEmail(@RequestParam String city) {

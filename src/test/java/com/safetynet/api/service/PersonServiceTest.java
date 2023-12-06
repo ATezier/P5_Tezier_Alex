@@ -1,7 +1,4 @@
 package com.safetynet.api.service;
-import com.safetynet.api.model.DataCluster;
-import com.safetynet.api.model.FireStation;
-import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.model.Person;
 import com.safetynet.api.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +22,7 @@ public class PersonServiceTest {
     @MockBean
     PersonRepository personRepository;
     @Autowired
-    PersonService personService;
+    PersonServiceImpl personService;
 
     @BeforeAll
     public static void setup() {

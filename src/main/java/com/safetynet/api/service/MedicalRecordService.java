@@ -1,9 +1,6 @@
 package com.safetynet.api.service;
 
 import com.safetynet.api.model.MedicalRecord;
-import com.safetynet.api.repository.MedicalRecordRepository;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,20 +9,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class MedicalRecordService {
-    public static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MedicalRecordService.class);
-    @Autowired
-    MedicalRecordRepository medicalRecordRepository;
+public interface MedicalRecordService {
 
-    public List<MedicalRecord> getMedicalRecords() { return medicalRecordRepository.getMedicalRecords(); }
-
-    public MedicalRecord getMedicalRecord(String firstName, String lastName) { return medicalRecordRepository.getMedicalRecord(firstName, lastName); }
-
-    public boolean createMedicalRecord(MedicalRecord medicalRecord) { return medicalRecordRepository.createMedicalRecord(medicalRecord); }
-
-    public boolean updateMedicalRecord(MedicalRecord medicalRecord) { return medicalRecordRepository.updateMedicalRecord(medicalRecord); }
-
-    public boolean deleteMedicalRecord(String firstName, String lastName) { return medicalRecordRepository.deleteMedicalRecord(firstName, lastName); }
+    public List<MedicalRecord> getMedicalRecords();
+    public MedicalRecord getMedicalRecord(String firstName, String lastName);
+    public boolean createMedicalRecord(MedicalRecord medicalRecord);
+    public boolean updateMedicalRecord(MedicalRecord medicalRecord);
+    public boolean deleteMedicalRecord(String firstName, String lastName);
+    public int getAge(String firstName, String lastName);
     public static int getAgeFromBirthdate(String birthdate) {
         int res = 0;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -36,17 +27,4 @@ public class MedicalRecordService {
         }
         return res;
     }
-
-    public int getAge(String firstName, String lastName) {
-        int res = 0;
-        MedicalRecord medicalRecord;
-        medicalRecord = medicalRecordRepository.getMedicalRecord(firstName, lastName);
-        if(medicalRecord != null) {
-            res = getAgeFromBirthdate(medicalRecord.getBirthdate());
-        } else {
-            logger.error("MedicalRecord not found for " + firstName + " " + lastName);
-        }
-        return res;
-    }
-
 }

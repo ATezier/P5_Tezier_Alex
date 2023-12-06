@@ -22,9 +22,9 @@ import static org.mockito.BDDMockito.given;
 public class AreaPopulationServiceTest {
     private static List<Summary> summaries;
     @MockBean
-    SummaryService summaryService;
+    SummaryServiceImpl summaryService;
     @Autowired
-    AreaPopulationService areaPopulationService;
+    AreaPopulationServiceImpl areaPopulationService;
 
     @BeforeAll
     public static void setup() {

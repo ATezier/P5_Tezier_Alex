@@ -2,10 +2,9 @@ package com.safetynet.api.controller;
 
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.service.FireStationService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,36 +13,36 @@ public class FireStationController {
     FireStationService fireStationService;
 
     @PostMapping("/firestation")
-    public HttpStatus createFireStation(@RequestBody FireStation fireStation) {
-        HttpStatus status = null;
+    public ResponseEntity<?> createFireStation(@RequestBody FireStation fireStation) {
+        ResponseEntity<?> res = null;
         if(fireStationService.createFireStation(fireStation)) {
-            status = HttpStatus.CREATED;
+            res = new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 
     @PutMapping("/firestation")
-    public HttpStatus updateFireStation(@RequestBody FireStation fireStation) {
-        HttpStatus status = null;
+    public ResponseEntity<?> updateFireStation(@RequestBody FireStation fireStation) {
+        ResponseEntity<?> res = null;
         if(fireStationService.updateFireStation(fireStation)) {
-            status = HttpStatus.OK;
+            res = new ResponseEntity<>(HttpStatus.OK);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 
     @DeleteMapping("/firestation")
-    public HttpStatus deleteFireStation(@RequestParam String address) {
-        HttpStatus status = null;
+    public ResponseEntity<?> deleteFireStation(@RequestParam String address) {
+        ResponseEntity<?> res = null;
         if(fireStationService.deleteFireStation(address)) {
-            status = HttpStatus.OK;
+            res = new ResponseEntity<>(HttpStatus.OK);
         } else {
-            status = HttpStatus.BAD_REQUEST;
+            res = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return status;
+        return res;
     }
 
 }

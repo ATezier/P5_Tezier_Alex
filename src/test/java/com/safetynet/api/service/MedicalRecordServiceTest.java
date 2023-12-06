@@ -26,7 +26,7 @@ public class MedicalRecordServiceTest {
     @MockBean
     MedicalRecordRepository medicalRecordRepository;
     @Autowired
-    MedicalRecordService medicalRecordService;
+    MedicalRecordServiceImpl medicalRecordService;
 
     @BeforeAll
     public static void setup() {

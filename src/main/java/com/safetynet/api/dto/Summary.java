@@ -1,9 +1,5 @@
 package com.safetynet.api.dto;
 
-import com.safetynet.api.model.FireStation;
-import com.safetynet.api.model.MedicalRecord;
-import com.safetynet.api.model.Person;
-import com.safetynet.api.service.MedicalRecordService;
 import lombok.Data;
 
 import java.util.Arrays;

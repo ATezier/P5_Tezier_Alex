@@ -2,6 +2,7 @@ package com.safetynet.api.controller;
 
 import com.safetynet.api.dto.Summary;
 import com.safetynet.api.service.SummaryService;
+import com.safetynet.api.service.SummaryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

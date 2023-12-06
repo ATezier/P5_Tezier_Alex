@@ -29,13 +29,13 @@ public class SummaryServiceTest {
     private static FireStation fireStation;
     private static Summary summary;
     @MockBean
-    PersonService personService;
+    PersonServiceImpl personService;
     @MockBean
-    MedicalRecordService medicalRecordService;
+    MedicalRecordServiceImpl medicalRecordService;
     @MockBean
-    FireStationService fireStationService;
+    FireStationServiceImpl fireStationService;
     @Autowired
-    SummaryService summaryService;
+    SummaryServiceImpl summaryService;
     @BeforeAll
     private static void setUp() {
         LocalDate date = LocalDate.now();
